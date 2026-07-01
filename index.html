@@ -329,6 +329,12 @@ html[data-theme="dark"] .tier-note b{color:var(--pink)}
 .lb-fav{text-align:center;font-size:13.5px;color:var(--ink-soft);margin-top:14px}
 .lb-note{margin-top:14px;padding:13px 15px;background:var(--surface-2);border-radius:13px;font-size:13px;color:var(--ink-soft);line-height:1.55;text-align:center}
 .link-danger{color:#c0563e;font-size:13px;font-weight:600;background:none}
+.about-panel .btn{width:auto}
+.app-credit{text-align:center;font-size:11.5px;color:var(--ink-faint);padding:6px 0 4px;line-height:1.65}
+.app-footer{text-align:center;font-size:11.5px;color:var(--ink-faint);padding:20px 0 6px}
+.app-credit a,.app-footer a,.about-panel a.btn{text-decoration:none}
+.app-credit a,.app-footer a{color:var(--purple-deep);font-weight:600}
+.app-credit a:hover,.app-footer a:hover{text-decoration:underline}
 html[data-theme="dark"] .link-danger{color:#e89a86}
 
 .nav{position:fixed;bottom:0;left:0;right:0;z-index:40;background:color-mix(in srgb,var(--surface) 86%,transparent);
@@ -445,6 +451,7 @@ html[data-theme="dark"] .menu-item.danger{color:#e89a86}
     <div class="sec-head"><span class="sec-title">Today</span><span class="sec-sub" id="today-date"></span></div>
     <div id="today-list"></div>
     <button class="btn btn-ghost add-habit" data-action="add-habit">+ Add a habit</button>
+    <div class="app-footer">Habitat by <a href="https://dreamstodone.etsy.com" target="_blank" rel="noopener noreferrer">DreamsToDone</a> · © <span class="cyear">2026</span></div>
   </section>
 
   <!-- HABITS -->
@@ -524,7 +531,12 @@ html[data-theme="dark"] .menu-item.danger{color:#e89a86}
       <p>Clears every habit and resets your companion. This can't be undone, so save a backup first.</p>
       <button class="link-danger" data-action="reset">Reset everything</button>
     </div>
-    <p style="text-align:center;font-size:11.5px;color:var(--ink-faint);padding:8px 0 4px">Habitat · works offline · your data never leaves your device</p>
+    <div class="panel about-panel">
+      <h3>About Habitat</h3>
+      <p>Made with care for busy, beautiful minds by <b>DreamsToDone</b>. If Habitat helps you, you'll find more calm, one-time tools — no subscriptions — over in the shop.</p>
+      <a class="btn btn-ghost" href="https://dreamstodone.etsy.com" target="_blank" rel="noopener noreferrer">Visit my shop ↗</a>
+    </div>
+    <p class="app-credit">© <span class="cyear">2026</span> <a href="https://dreamstodone.etsy.com" target="_blank" rel="noopener noreferrer">DreamsToDone</a> · Habitat works offline · your data never leaves your device</p>
   </section>
 </div>
 
@@ -1429,6 +1441,7 @@ if(!state.equipped)state.equipped={skin:"lav",acc:"none",habitat:"home",form:"au
 if(state.seenUnlocks==null){seedSeen();save();}
 if(state.seenMilestones==null){state.seenMilestones=MILESTONES.filter(msReached).map(m=>m.id);save();}
 applyTheme();render();
+try{var _cy=new Date().getFullYear();document.querySelectorAll(".cyear").forEach(function(e){e.textContent=_cy;});}catch(e){}
 if(state.onboarded){const nm=newMilestones();if(nm.length)setTimeout(()=>celebrateMilestone(nm[nm.length-1]),700);}
 if(!state.onboarded)setTimeout(openOnboarding,400);
 if(!Store.ok)setTimeout(()=>toast("Preview mode: changes won't be saved here. The real file saves automatically."),1200);
