@@ -812,26 +812,26 @@ function companionSVG(opts){const{tier=0,mood="content",cls="",id=""}=opts;
   const sk=skinById(opts.skin||(state.equipped&&state.equipped.skin)||"lav");
   const accId=opts.acc!=null?opts.acc:((state.equipped&&state.equipped.acc)||"none");
   const body=sk.body,deep=sk.deep,cream="var(--surface)",pink="var(--pink)",gold="var(--gold)",ink="var(--ink)";
-  const scale=0.6+tier*0.08;let eyesL,eyesR,mouth,extra="",zzz="";
-  if(mood==="nap"){eyesL=`<path d="M44 60 q6 5 12 0" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
-    eyesR=`<path d="M64 60 q6 5 12 0" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
-    mouth=`<path d="M55 72 q5 3 10 0" stroke="${ink}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
+  const scale=0.6+tier*0.08,faceInk="#2C2738",shine="#FFFFFF";let eyesL,eyesR,mouth,extra="",zzz="";
+  if(mood==="nap"){eyesL=`<path d="M44 60 q6 5 12 0" stroke="${faceInk}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    eyesR=`<path d="M64 60 q6 5 12 0" stroke="${faceInk}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    mouth=`<path d="M55 72 q5 3 10 0" stroke="${faceInk}" stroke-width="2.6" fill="none" stroke-linecap="round"/>`;
     zzz=`<text x="84" y="40" font-family="Fraunces,serif" font-size="13" fill="${ink}" opacity=".55">z</text><text x="92" y="30" font-family="Fraunces,serif" font-size="10" fill="${ink}" opacity=".4">z</text>`;
   }else if(mood==="happy"||mood==="comeback"){
-    eyesL=`<path d="M44 58 q6 -7 12 0" stroke="${ink}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
-    eyesR=`<path d="M64 58 q6 -7 12 0" stroke="${ink}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
-    mouth=`<path d="M52 70 q8 9 16 0" stroke="${ink}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
+    eyesL=`<path d="M44 58 q6 -7 12 0" stroke="${faceInk}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+    eyesR=`<path d="M64 58 q6 -7 12 0" stroke="${faceInk}" stroke-width="3.4" fill="none" stroke-linecap="round"/>`;
+    mouth=`<path d="M52 70 q8 9 16 0" stroke="${faceInk}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
   }else if(mood==="celebrate"){
-    eyesL=`<circle cx="50" cy="59" r="4" fill="${ink}"/>`;eyesR=`<circle cx="70" cy="59" r="4" fill="${ink}"/>`;
-    mouth=`<path d="M51 69 q9 11 18 0 z" fill="${ink}"/>`;
+    eyesL=`<circle cx="50" cy="59" r="4" fill="${faceInk}"/><circle cx="51.7" cy="57.4" r="1.35" fill="${shine}"/>`;eyesR=`<circle cx="70" cy="59" r="4" fill="${faceInk}"/><circle cx="71.7" cy="57.4" r="1.35" fill="${shine}"/>`;
+    mouth=`<path d="M51 69 q9 11 18 0 z" fill="${faceInk}"/>`;
     extra+=`<g opacity=".9"><path d="M30 40 l2 5 5 2 -5 2 -2 5 -2 -5 -5 -2 5 -2z" fill="${gold}"/><path d="M88 46 l1.6 4 4 1.6 -4 1.6 -1.6 4 -1.6 -4 -4 -1.6 4 -1.6z" fill="${pink}"/></g>`;
   }else if(mood==="newborn"){
-    eyesL=`<circle cx="52" cy="60" r="3" fill="${ink}"/>`;eyesR=`<circle cx="68" cy="60" r="3" fill="${ink}"/>`;
-    mouth=`<path d="M56 70 q4 3 8 0" stroke="${ink}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
+    eyesL=`<circle cx="52" cy="60" r="3.2" fill="${faceInk}"/><circle cx="53.1" cy="58.9" r="1" fill="${shine}"/>`;eyesR=`<circle cx="68" cy="60" r="3.2" fill="${faceInk}"/><circle cx="69.1" cy="58.9" r="1" fill="${shine}"/>`;
+    mouth=`<path d="M56 70 q4 3 8 0" stroke="${faceInk}" stroke-width="2.4" fill="none" stroke-linecap="round"/>`;
   }else{
-    eyesL=`<circle cx="50" cy="59" r="3.6" fill="${ink}"/><circle cx="51.4" cy="57.8" r="1.1" fill="${cream}"/>`;
-    eyesR=`<circle cx="70" cy="59" r="3.6" fill="${ink}"/><circle cx="71.4" cy="57.8" r="1.1" fill="${cream}"/>`;
-    mouth=`<path d="M54 70 q6 5 12 0" stroke="${ink}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`;}
+    eyesL=`<circle cx="50" cy="59" r="3.6" fill="${faceInk}"/><circle cx="51.4" cy="57.7" r="1.2" fill="${shine}"/>`;
+    eyesR=`<circle cx="70" cy="59" r="3.6" fill="${faceInk}"/><circle cx="71.4" cy="57.7" r="1.2" fill="${shine}"/>`;
+    mouth=`<path d="M54 70 q6 5 12 0" stroke="${faceInk}" stroke-width="2.8" fill="none" stroke-linecap="round"/>`;}
   const cheeks=`<circle cx="42" cy="67" r="5" fill="${pink}" opacity=".55"/><circle cx="78" cy="67" r="5" fill="${pink}" opacity=".55"/>`;
   // ---- evolution stage signatures (each visibly distinct) ----
   if(tier===0)extra+=`<path d="M60 25 q-2 -10 2 -13 q5 4 3 13z" fill="#7FB06A"/><circle cx="60" cy="11" r="2.7" fill="#A5D98A"/>`;
