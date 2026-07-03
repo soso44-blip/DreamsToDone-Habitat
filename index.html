@@ -112,6 +112,17 @@ input,textarea,select{font-family:inherit;font-size:16px;color:inherit}
 .switch::after{content:"";position:absolute;top:2px;left:2px;width:19px;height:19px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform .2s}
 .survival.on .switch{background:var(--gold)}
 .survival.on .switch::after{transform:translateX(17px)}
+.focus-card{background:var(--surface);border:1.5px solid var(--gold);border-radius:20px;padding:22px 20px;text-align:center;box-shadow:0 6px 20px rgba(94,71,160,.06)}
+.focus-lbl{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--gold-deep)}
+.focus-habit{display:flex;align-items:center;justify-content:center;gap:10px;font-family:var(--serif);font-size:24px;font-weight:600;color:var(--ink);margin:14px 0 18px}
+.focus-em{font-size:26px}
+.focus-check{width:100%;max-width:280px;margin:0 auto;font-size:16px;padding:14px}
+.focus-note{font-size:12.5px;color:var(--ink-soft);line-height:1.55;margin:14px auto 0;max-width:300px}
+.focus-more{display:block;margin:14px auto 0;background:none;border:none;color:var(--ink-faint);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.focus-card.done .focus-done-em{font-size:34px;margin:6px 0 4px}
+.focus-done-t{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink)}
+.focus-done-s{font-size:13px;color:var(--ink-soft);line-height:1.55;margin:8px auto 0;max-width:300px}
+.focus-collapse{display:block;margin:0 auto 12px;background:none;border:none;color:var(--gold-deep);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
 
 /* quest cta */
 .qbtn{display:flex;align-items:center;justify-content:center;gap:9px;width:100%;
@@ -445,7 +456,7 @@ html[data-theme="dark"] .menu-item.danger{color:#e89a86}
 
     <div class="survival" data-action="toggle-survival" id="survival">
       <span style="font-size:18px">🪫</span>
-      <div class="s-txt"><div class="s-t">Survival mode</div><div class="s-d">Low spoons today? One tiny thing still counts.</div></div>
+      <div class="s-txt"><div class="s-t">Survival mode</div><div class="s-d">Rough day? Shrinks today to one small thing — and your runs stay safe.</div></div>
       <div class="switch"></div>
     </div>
 
@@ -657,8 +668,9 @@ const SEED=false; /* DEMO BUILD: a copy with SEED=true loads a pre-filled showca
 let state=load();
 let session={comboCount:0,lastTs:0};
 let habitsView="week";
+let survivalExpanded=false;
 
-function defaultState(){return{v:1,onboarded:false,companion:"Pip",theme:"light",confetti:true,survival:false,
+function defaultState(){return{v:1,onboarded:false,companion:"Pip",theme:"light",confetti:true,survival:false,survivalDay:null,survivalDays:[],
   totalXP:0,momentum:0,momentumDay:todayISO(),lastCheckIn:null,totalCheckIns:0,
   quest:{date:null,id:null},seenLevel:0,createdAt:todayISO(),lastBackup:null,habits:[],
   equipped:{skin:"lav",acc:"none",habitat:"home",form:"auto"},seenUnlocks:null};}
@@ -679,11 +691,16 @@ function demoState(){const t=todayISO(),start=addDaysISO(t,-44);
     const flex=h.sched.type==="count"||h.sched.type==="monthly";if(!(flex||isScheduled(h,iso)))return;
     if(rnd()<bases[idx]+(i<8?0.1:0)){h.log[iso]=10;checks++;}});}
   H[0].log[t]=10;H[2].log[t]=10;delete H[1].log[t];delete H[3].log[t];
-  return{v:1,onboarded:true,companion:"Pip",theme:"light",confetti:true,survival:false,
+  return{v:1,onboarded:true,companion:"Pip",theme:"light",confetti:true,survival:false,survivalDay:null,survivalDays:[],
     totalXP:3920,momentum:86,momentumDay:t,lastCheckIn:t,totalCheckIns:checks,
     quest:{date:t,id:"d3"},seenLevel:10,createdAt:start,lastBackup:addDaysISO(t,-2),habits:H,
     equipped:{skin:"lav",acc:"none",habitat:"meadow",form:"auto"},seenUnlocks:null};}
-function refreshMomentum(){const t=todayISO();if(state.momentumDay!==t){const gap=daysBetween(state.momentumDay,t);
+function survivalActive(){return !!state.survival&&state.survivalDay===todayISO();}
+function isGrace(iso){return !!(state.survivalDays&&state.survivalDays.indexOf(iso)>=0);}
+function addGrace(iso){if(!state.survivalDays)state.survivalDays=[];if(state.survivalDays.indexOf(iso)<0)state.survivalDays.push(iso);if(state.survivalDays.length>180)state.survivalDays=state.survivalDays.slice(-180);}
+function removeGrace(iso){if(state.survivalDays){const i=state.survivalDays.indexOf(iso);if(i>=0)state.survivalDays.splice(i,1);}}
+function refreshMomentum(){const t=todayISO();if(state.momentumDay!==t){let gap=daysBetween(state.momentumDay,t);
+  if(gap>0){let graced=0;for(let i=1;i<=gap;i++){if(isGrace(addDaysISO(state.momentumDay,i)))graced++;}gap=Math.max(0,gap-graced);}
   if(gap>0&&state.totalCheckIns>0)state.momentum=Math.max(8,Math.round(state.momentum-gap*5));state.momentumDay=t;}}
 
 /* ---------- scheduling + runs (forgiving) ---------- */
@@ -695,10 +712,10 @@ function isScheduled(h,iso){const dow=isoToDate(iso).getDay();
   return true;} // count (per week) and monthly (per month) are flexible targets — log any day
 function isDone(h,iso){return h.log[iso]!=null;}
 function currentRun(h){let run=0,iso=todayISO();if(!isDone(h,iso))iso=addDaysISO(iso,-1);let g=0;
-  while(g++<400){if(isScheduled(h,iso)){if(isDone(h,iso))run++;else break;}iso=addDaysISO(iso,-1);}return run;}
+  while(g++<400){if(isScheduled(h,iso)){if(isDone(h,iso))run++;else if(!isGrace(iso))break;}iso=addDaysISO(iso,-1);}return run;}
 function bestRun(h){const dates=Object.keys(h.log).sort();if(!dates.length)return 0;
   let best=0,cur=0,prev=null;for(const d of dates){if(prev===null)cur=1;else{const gap=daysBetween(prev,d);let broke=false;
-    for(let i=1;i<gap;i++){if(isScheduled(h,addDaysISO(prev,i))){broke=true;break;}}cur=broke?1:cur+1;}
+    for(let i=1;i<gap;i++){const _d=addDaysISO(prev,i);if(isScheduled(h,_d)&&!isGrace(_d)){broke=true;break;}}cur=broke?1:cur+1;}
     if(cur>best)best=cur;prev=d;}return best;}
 function schedLabel(h){const s=h.sched;
   if(s.type==="daily")return"Every day";
@@ -721,6 +738,7 @@ function checkIn(id,ev){const h=state.habits.find(x=>x.id===id);if(!h)return;con
   if(isDone(h,t)){const was=h.log[t];delete h.log[t];
     state.totalXP=Math.max(0,state.totalXP-(was||0));state.totalCheckIns=Math.max(0,state.totalCheckIns-1);save();render();return;}
   const now=Date.now();if(now-session.lastTs<70000)session.comboCount++;else session.comboCount=1;session.lastTs=now;
+  const firstToday=!doneToday();
   const comboMult=session.comboCount>=5?3:session.comboCount>=3?2:1;
   const q=questHabit();const isQ=q&&q.id===h.id;const questMult=isQ?3:1;
   let xp=Math.round(10*questMult*comboMult),comeback=false;
@@ -736,11 +754,13 @@ function checkIn(id,ev){const h=state.habits.find(x=>x.id===id);if(!h)return;con
   const newMs=newMilestones();
   if(comeback)celebrateComeback();
   else if(newLevel>prevLevel)celebrateLevel(newLevel,tierFromLevel(newLevel)>prevTier);
+  else if(survivalActive()&&firstToday)celebrateSurvival();
   else if(newMs.length)celebrateMilestone(newMs[newMs.length-1]);
   else if(isQ)celebrateQuest();
   else if(fresh.length)flushUnlocks();
   else quickCelebrate(xp,comboMult>1?("🔥 "+comboMult+"× combo!"):null);
-  if(newMs.length&&(comeback||newLevel>prevLevel)){const m=newMs[newMs.length-1];setTimeout(()=>toast(`${m.e} ${m.t} — a lovely milestone with ${state.companion}`),1400);}}
+  if(newMs.length&&(comeback||newLevel>prevLevel||(survivalActive()&&firstToday))){const m=newMs[newMs.length-1];setTimeout(()=>toast(`${m.e} ${m.t} — a lovely milestone with ${state.companion}`),1400);}}
+function celebrateSurvival(){showCelebrate({cls:"bond",svg:companionSVG({tier:displayTier(),mood:"happy"}),kick:"survival mode",title:"That's your win today 💜",body:`You showed up on a hard day — that's the whole goal. ${state.companion} is proud, and your progress is safe.`});if(typeof burst==="function")burst();}
 
 /* ---------- companion svg ---------- */
 /* ---------- collectibles ---------- */
@@ -879,11 +899,13 @@ function render(){refreshMomentum();
   else if(mo>=35){moLabel="<b>steady</b> — keep it gentle";moColor="var(--gold)";}
   else{moLabel="<b>low</b> — one small thing lifts it";moColor="var(--rest)";}
   moDot.style.background=moColor;moTxt.innerHTML="Momentum: "+moLabel;
-  $("#survival").classList.toggle("on",state.survival);
+  $("#survival").classList.toggle("on",survivalActive());
   $("#affirm").innerHTML=`<div class="a-lbl">a reminder for today</div><div class="a-txt">${esc(affirmationToday())}</div>`;
   renderEncourage();renderQuestCta();renderToday();renderHabits();renderCompanion();renderBackup();}
 function renderEncourage(){const t=todayISO();const todays=state.habits.filter(h=>isScheduled(h,t));
   const done=todays.filter(h=>isDone(h,t)).length;const el=$("#encourage");let ic="🌤️",msg;
+  if(survivalActive()&&!survivalExpanded){el.style.display="none";el.innerHTML="";return;}
+  el.style.display="";
   if(!state.habits.length){ic="🌱";msg="Add one habit to begin. Start with something almost too easy.";}
   else if(state.survival){ic="🪫";msg="Survival mode on. One tiny check-in is a full win today.";}
   else if(todays.length===0){ic="😌";msg="Nothing scheduled today. Rest is part of the rhythm.";}
@@ -892,6 +914,7 @@ function renderEncourage(){const t=todayISO();const todays=state.habits.filter(h
   else{ic="🎉";msg="That's everything for today. Beautifully done.";}
   el.innerHTML=`<span class="e-ic">${ic}</span><span>${msg}</span>`;}
 function renderQuestCta(){const t=todayISO();const q=questHabit();const cta=$("#quest-cta");
+  if(survivalActive()&&!survivalExpanded){cta.innerHTML="";return;}
   if(q){const done=isDone(q,t);cta.innerHTML=done
     ?`<div class="quest-set">⚔️ Quest complete: <b>${esc(q.name)}</b> ✓</div>`
     :`<div class="quest-set">⚔️ Today's quest: <b>${esc(q.name)}</b> — triple XP when you finish it</div>`;}
@@ -919,7 +942,26 @@ function renderToday(){const t=todayISO();
   const wrap=$("#today-list");
   if(!state.habits.length){wrap.innerHTML=`<div class="empty"><span class="e-em">🌱</span><div class="e-t">No habits yet</div><div class="e-s">Your companion is waiting. Add one small habit to bring them to life.</div></div>`;return;}
   if(!todays.length){wrap.innerHTML=`<div class="empty"><span class="e-em">😌</span><div class="e-t">A rest day</div><div class="e-s">Nothing is scheduled for today. That's allowed — rhythm includes rest.</div></div>`;return;}
-  wrap.innerHTML=todays.map(habitCard).join("");}
+  if(survivalActive()&&!survivalExpanded){wrap.innerHTML=survivalFocusHTML(todays,t);return;}
+  wrap.innerHTML=(survivalActive()?`<button class="focus-collapse" data-action="survival-expand">◂ back to just one thing</button>`:"")+todays.map(habitCard).join("");}
+function survivalFocusHTML(todays,t){
+  const doneCount=todays.filter(h=>isDone(h,t)).length;
+  if(doneCount>0){
+    return `<div class="focus-card done">
+      <div class="focus-lbl">🪫 survival mode</div>
+      <div class="focus-done-em">💜</div>
+      <div class="focus-done-t">You showed up today.</div>
+      <div class="focus-done-s">That's a full win — nothing else is needed. Your momentum and runs are protected.</div>
+      <button class="focus-more" data-action="survival-expand">I've got a little more →</button>
+    </div>`;}
+  const q=questHabit();const focus=(q&&!isDone(q,t))?q:(todays.find(h=>!isDone(h,t))||todays[0]);
+  return `<div class="focus-card">
+    <div class="focus-lbl">🪫 survival mode · just one thing</div>
+    <div class="focus-habit"><span class="focus-em">${focus.emoji}</span><span>${esc(focus.name)}</span></div>
+    <button class="btn btn-primary focus-check" data-action="checkin" data-id="${focus.id}">I did this ✓</button>
+    <div class="focus-note">One tiny thing is a full win today. Whatever you don't get to, your runs stay safe.</div>
+    <button class="focus-more" data-action="survival-expand">show all my habits</button>
+  </div>`;}
 function renderSafetyBanner(){const el=$("#safety-banner");if(!el)return;
   const hasData=state.totalCheckIns>=3||state.habits.length>=2;
   const stale=!state.lastBackup||daysBetween(state.lastBackup,todayISO())>=7;
@@ -1389,7 +1431,8 @@ document.addEventListener("click",e=>{const el=e.target.closest("[data-action]")
     case"quest-set":setQuest(id);closeSheet();break;
     case"pick-quest":autoPickQuest();toast("⚔️ Quest set — triple XP awaits");break;
     case"set-habitsview":habitsView=el.dataset.view;renderHabits();break;
-    case"toggle-survival":state.survival=!state.survival;save();render();break;
+    case"toggle-survival":if(survivalActive()){state.survival=false;removeGrace(todayISO());}else{state.survival=true;state.survivalDay=todayISO();addGrace(todayISO());}survivalExpanded=false;save();render();break;
+    case"survival-expand":survivalExpanded=!survivalExpanded;render();break;
     case"set-theme":state.theme=el.dataset.theme;applyTheme();save();render();break;
     case"quick-theme":state.theme=state.theme==="dark"?"light":"dark";applyTheme();save();render();break;
     case"toggle-confetti":state.confetti=!state.confetti;save();render();if(state.confetti)burst();break;
