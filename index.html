@@ -86,6 +86,20 @@ input,textarea,select{font-family:inherit;font-size:16px;color:inherit}
 
 .bob{animation:bob 3.6s ease-in-out infinite}
 @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-7px)}}
+.peep{transform-box:fill-box;transform-origin:center;animation:blink 4.6s linear infinite}
+@keyframes blink{0%,91.5%,95.5%,100%{transform:scaleY(1)}93.5%{transform:scaleY(.06)}}
+.twitch{transform-box:fill-box;transform-origin:50% 100%;animation:twitch 9s ease-in-out infinite}
+@keyframes twitch{0%,86%,96%,100%{transform:rotate(0)}89%{transform:rotate(-3.5deg)}93%{transform:rotate(2.2deg)}}
+.hop{animation:hop .55s cubic-bezier(.34,1.56,.64,1)}
+@keyframes hop{0%{transform:translateY(0) scale(1)}32%{transform:translateY(-11px) scale(1.04,.95)}62%{transform:translateY(0) scale(.97,1.03)}100%{transform:translateY(0) scale(1)}}
+.pet-squish{animation:petsquish .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes petsquish{0%{transform:scale(1)}35%{transform:scale(1.09,.9)}70%{transform:scale(.96,1.05)}100%{transform:scale(1)}}
+.pet-host{position:relative}
+.pet-heart{position:absolute;font-size:15px;pointer-events:none;z-index:6;animation:heartfloat 1.15s ease-out forwards}
+@keyframes heartfloat{0%{opacity:0;transform:translateY(8px) scale(.55)}18%{opacity:1}100%{opacity:0;transform:translateY(-48px) scale(1.18)}}
+.pet-note{position:absolute;top:7px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid var(--line);border-radius:99px;padding:4px 13px;font-size:12px;font-weight:600;color:var(--purple-deep);white-space:nowrap;box-shadow:0 4px 14px rgba(44,39,56,.14);pointer-events:none;z-index:7;animation:petnote 2.2s ease forwards}
+@keyframes petnote{0%{opacity:0;transform:translateX(-50%) translateY(5px)}12%,80%{opacity:1;transform:translateX(-50%) translateY(0)}100%{opacity:0;transform:translateX(-50%) translateY(-7px)}}
+#hero-companion,#big-companion,#rail-companion{cursor:pointer;-webkit-tap-highlight-color:transparent}
 .pop{animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
 @keyframes pop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
 
@@ -416,13 +430,68 @@ html[data-theme="dark"] .menu-item.danger{color:#e89a86}
 
 #confetti{position:fixed;inset:0;pointer-events:none;z-index:110;display:none}
 @media (min-width:620px){#app{padding-left:24px;padding-right:24px}.comp-svg{width:160px;height:160px}}
-@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.05ms!important}.bob{animation:none}}
+#shell{display:contents}
+#side{display:none}
+@media (min-width:1024px){
+  html,body{height:auto;min-height:100%}
+  body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+    background:
+      radial-gradient(50% 42% at 15% 12%,var(--purple-soft),transparent 70%),
+      radial-gradient(46% 38% at 87% 16%,var(--pink-soft),transparent 72%),
+      radial-gradient(52% 46% at 85% 90%,var(--gold-soft),transparent 74%),
+      radial-gradient(50% 44% at 10% 88%,var(--purple-soft),transparent 74%);
+    opacity:.7}
+  #shell{display:flex;align-items:flex-start;max-width:1200px;margin:0 auto;min-height:100vh;
+    position:relative;z-index:1;background:var(--surface);box-shadow:0 30px 90px -50px rgba(38,24,74,.55)}
+  #side{display:flex;flex-direction:column;flex:0 0 288px;width:288px;padding:28px 22px 24px;
+    border-right:1px solid var(--line);position:sticky;top:0;height:100vh;
+    background:linear-gradient(180deg,var(--purple-soft),transparent 42%)}
+  .side-brand{font-family:var(--serif);font-weight:600;font-size:22px;display:flex;align-items:center;gap:10px;margin:2px 0 10px 4px}
+  .brand-dot{width:12px;height:12px;border-radius:50%;background:var(--purple)}
+  .side-comp{width:160px;height:160px;margin:2px auto 4px}
+  .side-comp svg{width:100%;height:100%;display:block}
+  .side-name{font-family:var(--serif);font-size:23px;font-weight:600;text-align:center}
+  .side-lvl{text-align:center;font-size:12.5px;color:var(--ink-soft);margin-top:2px}
+  .side-xp{height:6px;border-radius:99px;background:var(--surface-2);margin:12px 10px 0;overflow:hidden}
+  .side-xp-fill{height:100%;background:linear-gradient(90deg,var(--purple),var(--pink));border-radius:99px;transition:width .5s ease}
+  .side-mom{display:flex;align-items:center;gap:7px;justify-content:center;font-size:12px;color:var(--ink-soft);margin-top:10px}
+  .side-mom .mo-dot{width:8px;height:8px;border-radius:50%;flex:none}
+  .side-nav{display:flex;flex-direction:column;gap:3px;margin-top:26px}
+  .side-nav .nav-btn{flex-direction:row;justify-content:flex-start;gap:13px;padding:11px 14px;border-radius:14px;
+    font-size:15px;font-weight:600;color:var(--ink-soft);width:100%;height:auto}
+  .side-nav .nav-btn svg{width:20px;height:20px;margin:0}
+  .side-nav .nav-btn.active{background:var(--purple-soft);color:var(--purple-deep)}
+  .side-shop{margin-top:auto;text-align:center;font-size:12px;color:var(--ink-faint);text-decoration:none;padding-top:18px}
+  .side-shop:hover{color:var(--purple-deep)}
+  #app{flex:1;min-width:0;max-width:none;min-height:0;margin:0;padding:30px 40px 56px;display:block}
+  #app>.topbar,#app>.view{max-width:660px;margin-left:auto;margin-right:auto}
+  .topbar{justify-content:flex-end}
+  .topbar .wordmark{display:none}
+  #view-today>.hero{display:none}
+  .nav{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms!important;transition-duration:.05ms!important}.bob,.peep,.twitch,.pet-heart,.pet-note{animation:none}.pet-note{opacity:1}}
 .toast{position:fixed;bottom:calc(96px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--paper);padding:11px 18px;border-radius:99px;font-size:13.5px;font-weight:500;box-shadow:var(--shadow-lg);z-index:130;opacity:0;transition:all .3s;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 <canvas id="confetti"></canvas>
+<div id="shell"><aside id="side">
+  <div class="side-brand"><span class="brand-dot"></span>Habitat</div>
+  <div class="side-comp pet-host" id="rail-companion" data-action="pet" title="Give them a little pat"></div>
+  <div class="side-name" id="rail-name">Pip</div>
+  <div class="side-lvl" id="rail-lvl"></div>
+  <div class="side-xp"><div class="side-xp-fill" id="rail-xp"></div></div>
+  <div class="side-mom"><span class="mo-dot" id="rail-modot"></span><span id="rail-mom"></span></div>
+  <nav class="side-nav">
+    <button class="nav-btn side-btn active" data-action="nav-today"><svg viewBox="0 0 24 24"><path d="M3 9.5 12 3l9 6.5V21a1 1 0 0 1-1 1h-5v-7h-6v7H4a1 1 0 0 1-1-1Z"/></svg>Today</button>
+    <button class="nav-btn side-btn" data-action="nav-habits"><svg viewBox="0 0 24 24"><path d="M9 6h12M9 12h12M9 18h12"/><circle cx="4" cy="6" r="1.4"/><circle cx="4" cy="12" r="1.4"/><circle cx="4" cy="18" r="1.4"/></svg>Habits</button>
+    <button class="nav-btn side-btn" data-action="nav-companion"><svg viewBox="0 0 24 24"><path d="M12 21c5-3.5 8-7 8-11a5 5 0 0 0-9-3 5 5 0 0 0-9 3c0 4 3 7.5 8 11Z" fill="currentColor" stroke="none" opacity=".15"/><path d="M12 21c5-3.5 8-7 8-11a5 5 0 0 0-9-3 5 5 0 0 0-9 3c0 4 3 7.5 8 11Z"/></svg>Pip</button>
+    <button class="nav-btn side-btn" data-action="nav-backup"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>Backup</button>
+  </nav>
+  <a class="side-shop" href="https://dreamstodone.etsy.com" target="_blank" rel="noopener noreferrer">DreamsToDone ↗</a>
+</aside>
 <div id="app">
   <div class="topbar">
     <div class="wordmark"><span class="dot"></span>Habitat</div>
@@ -438,7 +507,7 @@ html[data-theme="dark"] .menu-item.danger{color:#e89a86}
   <section class="view active" id="view-today">
     <div class="hero">
       <div class="comp-stage">
-        <div id="hero-companion"></div>
+        <div id="hero-companion" data-action="pet" title="Give them a little pat"></div>
         <div class="comp-name" id="hero-name">Pip</div>
         <div class="comp-level" id="hero-level"></div>
         <div class="comp-mood-note" id="hero-mood"></div>
@@ -485,7 +554,7 @@ html[data-theme="dark"] .menu-item.danger{color:#e89a86}
   <!-- COMPANION -->
   <section class="view" id="view-companion">
     <div class="comp-big">
-      <div id="big-companion"></div>
+      <div id="big-companion" data-action="pet" title="Give them a little pat"></div>
       <div class="comp-name" id="big-name" style="margin-top:8px"></div>
       <div class="comp-level" id="big-level"></div>
       <div class="tier-note" id="tier-note"></div>
@@ -555,7 +624,7 @@ html[data-theme="dark"] .menu-item.danger{color:#e89a86}
     </div>
     <div class="app-footer">Habitat by <a href="https://dreamstodone.etsy.com" target="_blank" rel="noopener noreferrer">DreamsToDone</a> · © <span class="cyear">2026</span></div>
   </section>
-</div>
+</div></div>
 
 <nav class="nav"><div class="nav-inner">
   <button class="nav-btn active" data-action="nav-today">
@@ -748,7 +817,7 @@ function checkIn(id,ev){const h=state.habits.find(x=>x.id===id);if(!h)return;con
   refreshMomentum();state.momentum=Math.min(100,state.momentum+13);state.momentumDay=t;
   const fresh=newlyUnlocked();save();
   let label="+"+xp+" XP";if(comboMult>1)label+="  ×"+comboMult+" combo";
-  floatXP(ev,label);bounceCompanion();render();
+  floatXP(ev,label);render();reactCompanion();
   if(fresh.length)queueUnlocks(fresh);
   const newLevel=levelFromXP(state.totalXP);
   const newMs=newMilestones();
@@ -831,7 +900,7 @@ function compScene(svg,big){const id=(state.equipped&&state.equipped.habitat)||"
 function companionSVG(opts){const{tier=0,mood="content",cls="",id=""}=opts;
   const sk=skinById(opts.skin||(state.equipped&&state.equipped.skin)||"lav");
   const accId=opts.acc!=null?opts.acc:((state.equipped&&state.equipped.acc)||"none");
-  const body=sk.body,deep=sk.deep,cream="var(--surface)",pink="var(--pink)",gold="var(--gold)",ink="var(--ink)";
+  const body=sk.body,deep=sk.deep,cream="#F7F2FD",pink="var(--pink)",gold="var(--gold)",ink="var(--ink)";
   const scale=0.6+tier*0.08,faceInk="#2C2738",shine="#FFFFFF";let eyesL,eyesR,mouth,extra="",zzz="";
   if(mood==="nap"){eyesL=`<path d="M44 60 q6 5 12 0" stroke="${faceInk}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
     eyesR=`<path d="M64 60 q6 5 12 0" stroke="${faceInk}" stroke-width="3" fill="none" stroke-linecap="round"/>`;
@@ -869,9 +938,23 @@ function companionSVG(opts){const{tier=0,mood="content",cls="",id=""}=opts;
     <ellipse cx="60" cy="78" rx="20" ry="18" fill="${cream}" opacity=".88"/>`;
   const feet=`<ellipse cx="49" cy="99" rx="7" ry="4.5" fill="${deep}"/><ellipse cx="71" cy="99" rx="7" ry="4.5" fill="${deep}"/>`;
   const acc=accSVG(accId,ink);
+  const blink=!(mood==="nap"||mood==="happy"||mood==="comeback");
+  const eyesWrap=blink?`<g class="peep" style="animation-delay:-${(Math.random()*4.6).toFixed(2)}s">${eyesL}${eyesR}</g>`:eyesL+eyesR;
+  const earWrap=`<g class="twitch" style="animation-delay:-${(Math.random()*9).toFixed(2)}s">${ear}</g>`;
   return `<svg class="comp-svg ${cls}" ${id?`id="${id}"`:""} viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" style="transform:scale(${scale})">
-    ${aura}<g class="${reduceMotion?"":"bob"}">${wings}${ear}${torso}${feet}${cheeks}${eyesL}${eyesR}${mouth}${extra}${acc}${zzz}</g></svg>`;}
+    ${aura}<g class="${reduceMotion?"":"bob"}">${wings}${earWrap}${torso}${feet}${cheeks}${eyesWrap}${mouth}${extra}${acc}${zzz}</g></svg>`;}
 function doneToday(){const t=todayISO();return state.habits.some(h=>h.log&&h.log[t]!=null);}
+const PET_LINES=["hehe — that tickles!","I'm glad you're here 💜","*happy wiggle*","mmh… again?","!! 💜","you found my favourite spot","*leans in*","hi hi hi","I was hoping you'd stop by"];
+function petCompanion(el){if(!el)return;const host=el.querySelector(".comp-scene")||el;const svg=el.querySelector("svg");
+  if(svg){const box=svg.closest(".comp-scene")||el;box.classList.remove("pet-squish");void box.offsetWidth;box.classList.add("pet-squish");setTimeout(()=>box.classList.remove("pet-squish"),520);}
+  if(host.querySelectorAll(".pet-heart").length<10){const ems=["💜","💗","✨"];
+    for(let i=0;i<3;i++){const s=document.createElement("span");s.className="pet-heart";s.textContent=ems[Math.floor(Math.random()*ems.length)];
+      s.style.left=(36+Math.random()*28)+"%";s.style.bottom=(28+Math.random()*24)+"%";s.style.animationDelay=(i*0.07)+"s";
+      host.appendChild(s);setTimeout(()=>s.remove(),1300);}}
+  if(!host.querySelector(".pet-note")){const n=document.createElement("span");n.className="pet-note";
+    n.textContent=PET_LINES[Math.floor(Math.random()*PET_LINES.length)];host.appendChild(n);setTimeout(()=>n.remove(),2250);}}
+function reactCompanion(){["hero-companion","rail-companion"].forEach(id=>{const el=document.getElementById(id);if(!el)return;
+  const box=el.querySelector(".comp-scene")||el;box.classList.remove("hop");void box.offsetWidth;box.classList.add("hop");setTimeout(()=>box.classList.remove("hop"),580);});}
 function moodNow(){if(!state.onboarded||state.totalCheckIns===0||!state.lastCheckIn)return"newborn";
   const gap=daysBetween(state.lastCheckIn,todayISO());if(gap>=3)return"nap";
   if(doneToday())return"happy";return"content";}
@@ -901,7 +984,19 @@ function render(){refreshMomentum();
   moDot.style.background=moColor;moTxt.innerHTML="Momentum: "+moLabel;
   $("#survival").classList.toggle("on",survivalActive());
   $("#affirm").innerHTML=`<div class="a-lbl">a reminder for today</div><div class="a-txt">${esc(affirmationToday())}</div>`;
-  renderEncourage();renderQuestCta();renderToday();renderHabits();renderCompanion();renderBackup();}
+  renderEncourage();renderQuestCta();renderToday();renderHabits();renderCompanion();renderBackup();renderRail();}
+function renderRail(){const rc=$("#rail-companion");if(!rc)return;
+  const lvl=levelFromXP(state.totalXP),L=LEVELS[lvl],next=LEVELS[lvl+1];
+  rc.innerHTML=companionSVG({tier:displayTier(),mood:moodNow(),id:"comp-rail"});
+  $("#rail-name").textContent=state.companion;
+  $("#rail-lvl").innerHTML=`Level ${lvl+1} · ${L.em} ${L.name}`;
+  const fill=$("#rail-xp");if(fill){if(next){const span=next.min-L.min,have=state.totalXP-L.min;fill.style.width=Math.min(100,have/span*100)+"%";}else fill.style.width="100%";}
+  const mo=state.momentum;let lab,col;
+  if(state.totalCheckIns===0){lab="just getting started";col="var(--rest)";}
+  else if(mo>=65){lab="high";col="var(--good)";}
+  else if(mo>=35){lab="steady";col="var(--gold)";}
+  else{lab="low";col="var(--rest)";}
+  $("#rail-modot").style.background=col;$("#rail-mom").textContent="Momentum: "+lab;}
 function renderEncourage(){const t=todayISO();const todays=state.habits.filter(h=>isScheduled(h,t));
   const done=todays.filter(h=>isDone(h,t)).length;const el=$("#encourage");let ic="🌤️",msg;
   if(survivalActive()&&!survivalExpanded){el.style.display="none";el.innerHTML="";return;}
@@ -1245,7 +1340,6 @@ function burst(count){if(!state.confetti||reduceMotion)return;count=count||90;co
 function floatXP(ev,label){let x=innerWidth/2,y=innerHeight*.5;if(ev&&ev.clientX){x=ev.clientX;y=ev.clientY;}
   const el=document.createElement("div");el.className="xp-float";el.textContent=label;el.style.left=x+"px";el.style.top=y+"px";
   document.body.appendChild(el);setTimeout(()=>el.remove(),1100);}
-function bounceCompanion(){const s=$("#comp-hero");if(s&&!reduceMotion){const g=s.querySelector("g");if(g){g.classList.remove("pop");void g.offsetWidth;g.classList.add("pop");}}}
 
 /* ---------- add/edit habit ---------- */
 let editing=null,draft=null;
@@ -1410,6 +1504,7 @@ function updateThemeBtn(){const b=$("#theme-toggle");if(!b)return;
 function esc(s){return(s||"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[m]));}
 let toastT;function toast(msg){const el=$("#toast");el.textContent=msg;el.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove("show"),2600);}
 function switchView(v){document.querySelectorAll(".view").forEach(s=>s.classList.toggle("active",s.id==="view-"+v));
+  document.body.dataset.view=v;
   document.querySelectorAll(".nav-btn").forEach(b=>b.classList.toggle("active",b.dataset.action==="nav-"+v));
   window.scrollTo({top:0,behavior:reduceMotion?"auto":"smooth"});}
 
@@ -1432,6 +1527,7 @@ document.addEventListener("click",e=>{const el=e.target.closest("[data-action]")
     case"pick-quest":autoPickQuest();toast("⚔️ Quest set — triple XP awaits");break;
     case"set-habitsview":habitsView=el.dataset.view;renderHabits();break;
     case"toggle-survival":if(survivalActive()){state.survival=false;removeGrace(todayISO());}else{state.survival=true;state.survivalDay=todayISO();addGrace(todayISO());}survivalExpanded=false;save();render();break;
+    case"pet":petCompanion(el);break;
     case"survival-expand":survivalExpanded=!survivalExpanded;render();break;
     case"set-theme":state.theme=el.dataset.theme;applyTheme();save();render();break;
     case"quick-theme":state.theme=state.theme==="dark"?"light":"dark";applyTheme();save();render();break;
@@ -1503,6 +1599,7 @@ if(!state.equipped)state.equipped={skin:"lav",acc:"none",habitat:"home",form:"au
 if(state.seenUnlocks==null){seedSeen();save();}
 if(state.seenMilestones==null){state.seenMilestones=MILESTONES.filter(msReached).map(m=>m.id);save();}
 applyTheme();render();
+document.body.dataset.view="today";
 try{var _cy=new Date().getFullYear();document.querySelectorAll(".cyear").forEach(function(e){e.textContent=_cy;});}catch(e){}
 if(state.onboarded){const nm=newMilestones();if(nm.length)setTimeout(()=>celebrateMilestone(nm[nm.length-1]),700);}
 if(!state.onboarded)setTimeout(openOnboarding,400);
